@@ -1,20 +1,28 @@
 spring:
   cloud:
+    discovery:
+      enabled: true
     gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
       routes:
-        - id: login-service
-          uri: http://localhost:8080
+        - id: authentication-service
+          uri: lb://authentication-service
           predicates:
-            - Path=/hello
+            - Path=/login
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/orders
+
   application:
-    name: API-GATEWAY
+    name: api-gateway
 
 server:
-  port: 8078
+  port: 444
 
-eureka:
-  instance:
-    client:
-      serviceUrl:
-        defaultZone: http://localhost:8761/eureka/
-
+jwt:
+  secret: ${secretkey}
+  token:
+    validity: 28800000
